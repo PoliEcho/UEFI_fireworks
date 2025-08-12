@@ -24,7 +24,8 @@ RegisterFilterLib|edk2/MdePkg/Library/RegisterFilterLibNull/RegisterFilterLibNul
 StackCheckLib|edk2/MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
 TimerLib|edk2/MdePkg/Library/SecPeiDxeTimerLibCpu/SecPeiDxeTimerLibCpu.inf
 IoLib|edk2/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
-
+RngLib|edk2/MdePkg/Library/BaseRngLib/BaseRngLib.inf
+SerialPortLib|edk2/MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
 
 
 [Components]

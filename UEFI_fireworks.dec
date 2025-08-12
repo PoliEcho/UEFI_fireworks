@@ -16,7 +16,7 @@
   DevicePathLib|edk2/MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
   UefiBootServicesTableLib|edk2/MdePkg/Library/UefiBootServicesTableLib/UefiBootServicesTableLib.inf
   UefiRuntimeServicesTableLib|edk2/MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
-  DebugLib|edk2/MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+  DebugLib|edk2/MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
   PrintLib|edk2/MdePkg/Library/BasePrintLib/BasePrintLib.inf
   PcdLib|edk2/MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   RegisterFilterLib|edk2/MdePkg/Library/RegisterFilterLibNull/RegisterFilterLibNull.inf

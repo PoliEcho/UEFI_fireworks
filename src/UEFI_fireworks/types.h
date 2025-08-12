@@ -11,9 +11,9 @@ struct firework_instance {
   UINT16 cleanup_r;
 };
 
-struct firework_node {
+typedef struct {
   UINTN Signature;
   struct firework_instance Firework;
   LIST_ENTRY Link;
-};
+} firework_node;
 #define FIREWORK_NODE_SIGNATURE SIGNATURE_32('f', 'w', 'r', 'k')

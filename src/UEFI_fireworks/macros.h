@@ -4,3 +4,5 @@
    .Green = ((hex) >> 8) & 0xFF,                                               \
    .Red = ((hex) >> 16) & 0xFF,                                                \
    .Reserved = 0}
+
+#define SERIAL_PRINT(str) SerialPortWrite((UINT8 *)str, AsciiStrLen(str))

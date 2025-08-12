@@ -25,9 +25,11 @@
   DebugLib
   PrintLib
   TimerLib
+  RngLib
+  SerialPortLib
 
 [Protocols]
-
+  gEfiRngProtocolGuid
 [Guids]
 
 [Pcd]
