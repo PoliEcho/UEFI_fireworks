@@ -1,0 +1,29 @@
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = UEFI_fireworks
+  PACKAGE_GUID                   = E0EBB5C7-E372-485F-AE86-38BF05792885
+  PACKAGE_VERSION                = 1.0
+
+[Includes]
+  src
+
+[LibraryClasses]
+  UefiApplicationEntryPoint|edk2/MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
+  UefiLib|edk2/MdePkg/Library/UefiLib/UefiLib.inf
+  BaseLib|edk2/MdePkg/Library/BaseLib/BaseLib.inf
+  BaseMemoryLib|edk2/MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
+  MemoryAllocationLib|edk2/MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
+  DevicePathLib|edk2/MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
+  UefiBootServicesTableLib|edk2/MdePkg/Library/UefiBootServicesTableLib/UefiBootServicesTableLib.inf
+  UefiRuntimeServicesTableLib|edk2/MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
+  DebugLib|edk2/MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+  PrintLib|edk2/MdePkg/Library/BasePrintLib/BasePrintLib.inf
+  PcdLib|edk2/MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
+  RegisterFilterLib|edk2/MdePkg/Library/RegisterFilterLibNull/RegisterFilterLibNull.inf
+
+
+[Guids]
+
+[Ppis]
+
+[Protocols]

@@ -1,0 +1,31 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = UEFI_fireworks
+  FILE_GUID                      = 84D67930-D3DD-48F7-8B01-42CE018232AB
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = UefiMain
+
+[Sources]
+  UefiMain.c
+
+[Packages]
+  edk2/MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  UefiApplicationEntryPoint
+  UefiLib
+  BaseLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DevicePathLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  DebugLib
+  PrintLib
+
+[Protocols]
+
+[Guids]
+
+[Pcd]
