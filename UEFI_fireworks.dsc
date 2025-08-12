@@ -22,6 +22,9 @@ PrintLib|edk2/MdePkg/Library/BasePrintLib/BasePrintLib.inf
 PcdLib|edk2/MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
 RegisterFilterLib|edk2/MdePkg/Library/RegisterFilterLibNull/RegisterFilterLibNull.inf
 StackCheckLib|edk2/MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
+TimerLib|edk2/MdePkg/Library/SecPeiDxeTimerLibCpu/SecPeiDxeTimerLibCpu.inf
+IoLib|edk2/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
+
 
 
 [Components]

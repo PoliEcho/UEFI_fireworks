@@ -8,6 +8,7 @@
 
 [Sources]
   UefiMain.c
+  drawing.c
 
 [Packages]
   edk2/MdePkg/MdePkg.dec
@@ -23,6 +24,7 @@
   UefiRuntimeServicesTableLib
   DebugLib
   PrintLib
+  TimerLib
 
 [Protocols]
 
