@@ -1,8 +1,9 @@
+#include "Base.h"
 #include "Library/UefiLib.h"
 #include "ProcessorBind.h"
 #include "const.h"
 #include "global.h"
-#include "macros.h"
+#include "types.h"
 #include <Library/UefiApplicationEntryPoint.h>
 #include <Protocol/GraphicsOutput.h>
 
@@ -25,6 +26,10 @@ void draw_circle(int xc, int yc, int r,
                  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL color) {
   int x = r, y = 0;
   draw_pixel(x + xc, y + yc, color);
+
+  // fix missng pixels
+  draw_pixel(xc - r, yc, color);
+  draw_pixel(xc, yc - r, color);
 
   if (r > 0) {
     draw_pixel(x + xc, -y + yc, color);
@@ -77,4 +82,25 @@ void clear_screen() {
         0 // Delta (not used for fill operations)
     );
   }
+}
+
+BOOLEAN step_firework(struct firework_instance *firework) {
+  for (UINT8 i = 0; i < ARRAY_SIZE(firework->r); i++) {
+    if (firework->r[i] < firework->max_r) {
+      if (i == 0 || (firework->max_r / 3) * i <= firework->r[i - 1]) {
+        draw_circle(firework->x, firework->y, firework->r[i],
+                    firework->color[i]);
+        firework->r[i]++;
+      }
+    }
+  }
+  if (firework->r[1] >= firework->max_r) {
+    if (firework->cleanup_r < firework->max_r) {
+      draw_circle(firework->x, firework->y, firework->cleanup_r, night_sky);
+      firework->cleanup_r++;
+    } else {
+      return FALSE;
+    }
+  }
+  return TRUE;
 }
