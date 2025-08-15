@@ -10,6 +10,7 @@
   UefiMain.c
   drawing.c
   rng.c
+  time.c
 
 [Packages]
   edk2/MdePkg/MdePkg.dec
@@ -28,6 +29,7 @@
   TimerLib
   RngLib
   SerialPortLib
+  UefiRuntimeServicesTableLib
 
 [Protocols]
   gEfiRngProtocolGuid

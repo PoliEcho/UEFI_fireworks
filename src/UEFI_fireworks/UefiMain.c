@@ -4,6 +4,7 @@
 #include "global.h"
 #include "macros.h"
 #include "rng.h"
+#include "time.h"
 #include "types.h"
 #include <Base.h>
 #include <Library/BaseLib.h>
@@ -11,9 +12,9 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/RngLib.h>
 #include <Library/SerialPortLib.h>
-#include <Library/TimerLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
 #include <Protocol/GraphicsOutput.h>
 #include <Uefi.h>
 #include <stdint.h>
@@ -24,9 +25,11 @@ EFI_GRAPHICS_OUTPUT_BLT_PIXEL *framebuffer = NULL;
 
 EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
                            IN EFI_SYSTEM_TABLE *sysTable) {
+  Print(L"Starting program\n");
   gST = sysTable;
   gBS = sysTable->BootServices;
   gImageHandle = imgHandle;
+  gRT = sysTable->RuntimeServices;
 
   // UEFI apps automatically exit after 5 minutes. Stop that here
   gBS->SetWatchdogTimer(0, 0, 0, NULL);
@@ -39,6 +42,11 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
 
   gBS->LocateProtocol(&gEfiGraphicsOutputProtocolGuid, NULL,
                       (VOID **)&GraphicsOutput);
+
+  if (GraphicsOutput == NULL) {
+    Print(L"GraphicsOutput protocol not found!\n");
+    return EFI_NOT_FOUND;
+  }
 
   framebuffer =
       (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)GraphicsOutput->Mode->FrameBufferBase;
@@ -58,9 +66,9 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
   gBS->SetMem(firework_array, sizeof(firework_array),
               0); // make all pointers null
 
-  SERIAL_PRINT("DOES it work?");
+  SERIAL_PRINT("DOES it work?\n");
   Print(L"If you see this message timer does not work\n");
-  MicroSecondDelay(1000);
+  milisleep(100);
   clear_screen();
 
   while (TRUE) {
@@ -86,7 +94,7 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
           goto assgned;
         } // firework will not be created if if all slots are full
       }
-      Print(L"NO free slots\n");
+      SERIAL_PRINT("NO free slots\n");
     }
   assgned:
     for (UINT8 i = 0; i < ARRAY_SIZE(firework_array); i++) {
@@ -102,7 +110,7 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
       }
     }
 
-    MicroSecondDelay(100000);
+    milisleep(10);
   }
 
   return EFI_SUCCESS;

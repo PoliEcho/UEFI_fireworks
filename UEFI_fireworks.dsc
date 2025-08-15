@@ -24,12 +24,12 @@ RegisterFilterLib|edk2/MdePkg/Library/RegisterFilterLibNull/RegisterFilterLibNul
 StackCheckLib|edk2/MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
 IoLib|edk2/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
 RngLib|edk2/MdePkg/Library/BaseRngLib/BaseRngLib.inf
-SerialPortLib|edk2/UefiPayloadPkg/Library/BaseSerialPortLibHob/BaseSerialPortLibHob.inf
-TimerLib|edk2/OvmfPkg/Library/AcpiTimerLib/DxeAcpiTimerLib.inf
-PciLib|edk2/MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
-HobLib|edk2/MdePkg/Library/DxeHobLib/DxeHobLib.inf
-PciCf8Lib|edk2/MdePkg/Library/BasePciCf8Lib/BasePciCf8Lib.inf
+SerialPortLib|edk2/MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
 DebugPrintErrorLevelLib|edk2/MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
+LocalApicLib|edk2/UefiCpuPkg/Library/BaseXApicLib/BaseXApicLib.inf
+CpuLib|edk2/MdePkg/Library/BaseCpuLib/BaseCpuLib.inf
+UefiRuntimeServicesTableLib|edk2/MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
+TimerLib|edk2/MdePkg/Library/BaseTimerLibNullTemplate/BaseTimerLibNullTemplate.inf
 
 [Components]
   src/UEFI_fireworks/UEFI_fireworks.inf

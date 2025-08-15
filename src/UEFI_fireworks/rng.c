@@ -2,6 +2,7 @@
 #include "Library/UefiBootServicesTableLib.h"
 #include "Library/UefiLib.h"
 #include "ProcessorBind.h"
+#include "time.h"
 #include <Library/BaseLib.h>
 #include <Library/RngLib.h>
 #include <Library/TimerLib.h>
@@ -63,7 +64,7 @@ void init_rng() {
     Print(L"Continuing in  ");
     for (UINT8 i = 5; i > 0; i--) {
       Print(L"\b%d", i);
-      MicroSecondDelay(1000000);
+      milisleep(1000);
     }
 
     fill_random_bytes = fill_random_bytes_LFSR;
