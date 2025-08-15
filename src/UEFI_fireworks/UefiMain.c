@@ -3,6 +3,7 @@
 #include "drawing.h"
 #include "global.h"
 #include "macros.h"
+#include "rng.h"
 #include "types.h"
 #include <Base.h>
 #include <Library/BaseLib.h>
@@ -15,7 +16,9 @@
 #include <Library/UefiLib.h>
 #include <Protocol/GraphicsOutput.h>
 #include <Uefi.h>
+#include <stdint.h>
 
+firework_instance create_firework();
 EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL *framebuffer = NULL;
 
@@ -40,60 +43,89 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
   framebuffer =
       (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)GraphicsOutput->Mode->FrameBufferBase;
 
-  clear_screen(GraphicsOutput);
-
-  LIST_ENTRY firework_list;
-  InitializeListHead(&firework_list);
+  init_rng();
 
   if (SerialPortInitialize() == RETURN_SUCCESS) {
-    SERIAL_PRINT("Serial initialized");
+    SERIAL_PRINT("Serial initialized\n");
   } else {
-    Print(L"Failed to initialize Serial");
-    Exit(RETURN_DEVICE_ERROR);
+    Print(L"Failed to initialize Serial!\n");
   }
+  SerialPortSetControl(EFI_SERIAL_CLEAR_TO_SEND |
+                       EFI_SERIAL_DATA_TERMINAL_READY |
+                       EFI_SERIAL_REQUEST_TO_SEND);
+
+  firework_instance *firework_array[UINT8_MAX];
+  gBS->SetMem(firework_array, sizeof(firework_array),
+              0); // make all pointers null
+
+  SERIAL_PRINT("DOES it work?");
+  Print(L"If you see this message timer does not work\n");
+  MicroSecondDelay(1000);
+  clear_screen();
+
   while (TRUE) {
-    UINT32 random;
-    GetRandomNumber32(&random);
+    UINT8 random;
+    fill_random_bytes(&random, sizeof(random));
     if (random % 6 == 0) {
       // spawn new firework
-      firework_node *new_firework_node =
-          AllocateZeroPool(sizeof(firework_node));
-      if (new_firework_node == NULL) {
+      firework_instance *new_firework_instence =
+          AllocateZeroPool(sizeof(firework_instance));
+      if (new_firework_instence == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
-      new_firework_node->Signature = FIREWORK_NODE_SIGNATURE;
-      GetRandomNumber32(&random);
-      new_firework_node->Firework.max_r =
-          random % 501; // so max number can be 500
-      for (UINT8 i = 0; i < ARRAY_SIZE(new_firework_node->Firework.color);
-           i++) {
-        GetRandomNumber32(
-            (UINT32 *)&new_firework_node->Firework.color[i]); // belive
-        new_firework_node->Firework.r[i] = 0;
+
+      *new_firework_instence = create_firework();
+
+      for (UINT8 i = 0; i < ARRAY_SIZE(firework_array); i++) {
+        if (firework_array[i] == NULL || firework_array[i]->active != TRUE) {
+          if (firework_array[i] != NULL) {
+            FreePool(firework_array[i]); // free firework
+            firework_array[i] = NULL;
+          }
+          firework_array[i] = new_firework_instence;
+          goto assgned;
+        } // firework will not be created if if all slots are full
       }
-      new_firework_node->Firework.cleanup_r = 0;
-      GetRandomNumber32(&random);
-      new_firework_node->Firework.x =
-          random % GraphicsOutput->Mode->Info->HorizontalResolution + 1;
-      GetRandomNumber32(&random);
-      new_firework_node->Firework.y =
-          random % GraphicsOutput->Mode->Info->VerticalResolution + 1;
-
-      InsertTailList(&firework_list, &new_firework_node->Link);
+      Print(L"NO free slots\n");
     }
-
-    firework_node *current_node = NULL;
-    for (LIST_ENTRY *node = GetFirstNode(&firework_list);
-         !IsNodeAtEnd(&firework_list, node);
-         node = GetNextNode(&firework_list, node)) {
-      // Print(L"Processing firework\r\n");
-
-      current_node = CR(node, firework_node, Link, FIREWORK_NODE_SIGNATURE);
-      if (!step_firework(&current_node->Firework)) {
-        RemoveEntryList(node); // remove if firework ended
+  assgned:
+    for (UINT8 i = 0; i < ARRAY_SIZE(firework_array); i++) {
+      if (firework_array[i] != NULL) {
+        if (firework_array[i]->active == TRUE) {
+          if (!step_firework(firework_array[i])) {
+            firework_array[i]->active = FALSE;
+          }
+        } else {
+          FreePool(firework_array[i]); // free firework
+          firework_array[i] = NULL;
+        }
       }
     }
-    MicroSecondDelay(500000);
+
+    MicroSecondDelay(100000);
   }
+
   return EFI_SUCCESS;
+}
+
+firework_instance create_firework() {
+  firework_instance firework;
+  UINT32 random;
+  fill_random_bytes(&random, sizeof(random));
+  firework.max_r = (random % 200) + 1; // 1 to 200, avoiding 0
+
+  for (UINT8 i = 0; i < ARRAY_SIZE(firework.color); i++) {
+    fill_random_bytes(&firework.color[i],
+                      sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL) - 1);
+    firework.r[i] = 0;
+  }
+  firework.cleanup_r = 0;
+
+  fill_random_bytes(&random, sizeof(random));
+  firework.x = random % GraphicsOutput->Mode->Info->HorizontalResolution;
+  fill_random_bytes(&random, sizeof(random));
+  firework.y = random % GraphicsOutput->Mode->Info->VerticalResolution;
+
+  firework.active = TRUE;
+  return firework;
 }

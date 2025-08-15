@@ -9,6 +9,7 @@
 [Sources]
   UefiMain.c
   drawing.c
+  rng.c
 
 [Packages]
   edk2/MdePkg/MdePkg.dec

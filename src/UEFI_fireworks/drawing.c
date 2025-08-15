@@ -9,12 +9,15 @@
 
 void draw_pixel(const UINT32 x, const UINT32 y,
                 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL pixel) {
+  if (x > GraphicsOutput->Mode->Info->HorizontalResolution ||
+      y > GraphicsOutput->Mode->Info
+              ->VerticalResolution) { // ignore when out of bounds
+    return;
+  }
   UINTN framebuffer_offset =
       (y * GraphicsOutput->Mode->Info->PixelsPerScanLine) + x;
-  if (framebuffer_offset <
-      GraphicsOutput->Mode->FrameBufferSize) { // ignre when out of bounds
-    framebuffer[framebuffer_offset] = pixel;
-  }
+
+  framebuffer[framebuffer_offset] = pixel;
 }
 
 // uses Mid-Point Circle Drawing Algorithm
@@ -82,7 +85,7 @@ void clear_screen() {
   }
 }
 
-BOOLEAN step_firework(struct firework_instance *firework) {
+BOOLEAN step_firework(firework_instance *firework) {
   for (UINT8 i = 0; i < ARRAY_SIZE(firework->r); i++) {
     if (firework->r[i] < firework->max_r) {
       if (i == 0 || (firework->max_r / 3.5) * i <= firework->r[i - 1]) {
