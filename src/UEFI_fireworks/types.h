@@ -19,3 +19,10 @@ typedef struct {
   UINT16 cleanup_r;
   rocket_instance rocket;
 } firework_instance;
+
+typedef struct {
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL *blt;
+  UINTN blt_size;
+  UINTN height;
+  UINTN width;
+} rocket_blt;

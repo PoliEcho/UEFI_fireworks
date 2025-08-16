@@ -5,3 +5,5 @@ void draw_circle(int xc, int yc, int r,
                  const EFI_GRAPHICS_OUTPUT_BLT_PIXEL color);
 void clear_screen();
 BOOLEAN step_firework(firework_instance *firework);
+void init_rocket_blt();
+BOOLEAN step_rocket(rocket_instance *rocket, UINT32 max_y);

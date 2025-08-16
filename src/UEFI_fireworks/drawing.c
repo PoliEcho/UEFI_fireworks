@@ -1,8 +1,11 @@
 #include "Base.h"
+#include "Library/UefiLib.h"
 #include "ProcessorBind.h"
+#include "bmp.h"
 #include "const.h"
 #include "global.h"
 #include "types.h"
+#include <../MdeModulePkg/Include/Library/BmpSupportLib.h>
 #include <Library/UefiApplicationEntryPoint.h>
 #include <Protocol/GraphicsOutput.h>
 
@@ -104,5 +107,52 @@ BOOLEAN step_firework(firework_instance *firework) {
   }
   return TRUE;
 }
+rocket_blt rocket_asset;
 
-BOOLEAN step_rocket(rocket_instance *rocket) {}
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL **mask_stack;
+BOOLEAN **rocket_alfa_mask;
+
+void init_rocket_blt() {
+  EFI_STATUS Status = TranslateBmpToGopBlt(
+      assets_rocket_bmp, assets_rocket_bmp_len, &rocket_asset.blt,
+      &rocket_asset.blt_size, &rocket_asset.height, &rocket_asset.width);
+  if (EFI_ERROR(Status)) {
+    Print(L"Failed to load rocket asset: %r\n", Status);
+    Exit(Status);
+  }
+}
+
+BOOLEAN step_rocket(rocket_instance *rocket, UINT32 max_y) {
+  GraphicsOutput->Blt(GraphicsOutput,
+                      rocket_asset.blt,    // BltBuffer
+                      EfiBltBufferToVideo, // BltOperation
+                      0,                   // src X
+                      0,                   // src Y
+                      rocket->x,           // dst X
+                      rocket->y,           // dst Y
+                      rocket_asset.width, rocket_asset.height,
+                      0 // unused Delta
+  );
+
+  if (rocket->y <= max_y) {
+    GraphicsOutput->Blt(
+        GraphicsOutput,
+        &night_sky,              // BltBuffer
+        EfiBltVideoFill,         // BltOperation
+        0,                       // SourceX
+        0,                       // SourceY
+        rocket->x,               // DestinationX
+        rocket->y,               // DestinationY
+        rocket_asset.width,      // Width
+        rocket_asset.height + 1, // Height // remove trail from previous frame
+        0                        // Delta (not used for fill operations)
+    );
+    return FALSE;
+  } else {
+    for (UINT8 i = 0; i < rocket_asset.width; i++) {
+      draw_pixel(rocket->x + i, rocket->y + rocket_asset.height, night_sky);
+    }
+    rocket->y--;
+    return TRUE;
+  }
+}

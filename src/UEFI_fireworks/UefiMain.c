@@ -6,7 +6,6 @@
 #include "rng.h"
 #include "time.h"
 #include "types.h"
-#include <../MdeModulePkg/Include/Library/BmpSupportLib.h>
 #include <Base.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
@@ -55,6 +54,7 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
       (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)GraphicsOutput->Mode->FrameBufferBase;
 
   init_rng();
+  init_rocket_blt();
 
   if (SerialPortInitialize() == RETURN_SUCCESS) {
     SERIAL_PRINT("Serial initialized\n");
@@ -74,6 +74,13 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
   milisleep(1);
   clear_screen();
 
+  /*rocket_instance rocket = {
+      .x = GraphicsOutput->Mode->Info->HorizontalResolution / 2,
+      .y = GraphicsOutput->Mode->Info->VerticalResolution - 50};
+  while (step_rocket(&rocket, 100)) {
+    milisleep(10);
+  }*/
+
   while (TRUE) {
     UINT8 random;
     fill_random_bytes(&random, sizeof(random));
@@ -88,7 +95,8 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
       *new_firework_instence = create_firework();
 
       for (UINT8 i = 0; i < ARRAY_SIZE(firework_array); i++) {
-        if (firework_array[i] == NULL || firework_array[i]->status != TRUE) {
+        if (firework_array[i] == NULL ||
+            firework_array[i]->status == INACTIVE) {
           if (firework_array[i] != NULL) {
             FreePool(firework_array[i]); // free firework
             firework_array[i] = NULL;
@@ -105,6 +113,10 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
         if (firework_array[i]->status == ACTIVE) {
           if (!step_firework(firework_array[i])) {
             firework_array[i]->status = INACTIVE;
+          }
+        } else if (firework_array[i]->status == LAUNCHING) {
+          if (!step_rocket(&firework_array[i]->rocket, firework_array[i]->y)) {
+            firework_array[i]->status = ACTIVE;
           }
         } else {
           FreePool(firework_array[i]); // free firework
@@ -138,6 +150,8 @@ firework_instance create_firework() {
   firework.y = random % GraphicsOutput->Mode->Info->VerticalResolution /
                2; // spawn only on upper half of the screen
 
-  firework.status = ACTIVE; // TODO set to LAUNCHING when implemented
+  firework.rocket.x = firework.x + rocket_asset.width / 2;
+  firework.rocket.y = GraphicsOutput->Mode->Info->VerticalResolution;
+  firework.status = LAUNCHING; // TODO set to LAUNCHING when implemented
   return firework;
 }
