@@ -1,11 +1,12 @@
-#include "Library/UefiApplicationEntryPoint.h"
 #include "ProcessorBind.h"
+#include "const.h"
 #include "drawing.h"
 #include "global.h"
 #include "macros.h"
 #include "rng.h"
 #include "time.h"
 #include "types.h"
+#include <../MdeModulePkg/Include/Library/BmpSupportLib.h>
 #include <Base.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
@@ -18,6 +19,8 @@
 #include <Protocol/GraphicsOutput.h>
 #include <Uefi.h>
 #include <stdint.h>
+EFI_GRAPHICS_OUTPUT_BLT_PIXEL night_sky =
+    COLOR_FROM_HEX(0x11095e); // this cannot be const becose EDK2 said so
 
 firework_instance create_firework();
 EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
@@ -67,14 +70,14 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
               0); // make all pointers null
 
   SERIAL_PRINT("DOES it work?\n");
-  Print(L"If you see this message timer does not work\n");
-  milisleep(100);
+  Print(L"If you see this message for long time, timer does not work\n");
+  milisleep(1);
   clear_screen();
 
   while (TRUE) {
     UINT8 random;
     fill_random_bytes(&random, sizeof(random));
-    if (random % 6 == 0) {
+    if (random % 30 == 0) {
       // spawn new firework
       firework_instance *new_firework_instence =
           AllocateZeroPool(sizeof(firework_instance));
@@ -85,7 +88,7 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
       *new_firework_instence = create_firework();
 
       for (UINT8 i = 0; i < ARRAY_SIZE(firework_array); i++) {
-        if (firework_array[i] == NULL || firework_array[i]->active != TRUE) {
+        if (firework_array[i] == NULL || firework_array[i]->status != TRUE) {
           if (firework_array[i] != NULL) {
             FreePool(firework_array[i]); // free firework
             firework_array[i] = NULL;
@@ -99,9 +102,9 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
   assgned:
     for (UINT8 i = 0; i < ARRAY_SIZE(firework_array); i++) {
       if (firework_array[i] != NULL) {
-        if (firework_array[i]->active == TRUE) {
+        if (firework_array[i]->status == ACTIVE) {
           if (!step_firework(firework_array[i])) {
-            firework_array[i]->active = FALSE;
+            firework_array[i]->status = INACTIVE;
           }
         } else {
           FreePool(firework_array[i]); // free firework
@@ -132,8 +135,9 @@ firework_instance create_firework() {
   fill_random_bytes(&random, sizeof(random));
   firework.x = random % GraphicsOutput->Mode->Info->HorizontalResolution;
   fill_random_bytes(&random, sizeof(random));
-  firework.y = random % GraphicsOutput->Mode->Info->VerticalResolution;
+  firework.y = random % GraphicsOutput->Mode->Info->VerticalResolution /
+               2; // spawn only on upper half of the screen
 
-  firework.active = TRUE;
+  firework.status = ACTIVE; // TODO set to LAUNCHING when implemented
   return firework;
 }

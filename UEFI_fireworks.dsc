@@ -30,6 +30,8 @@ LocalApicLib|edk2/UefiCpuPkg/Library/BaseXApicLib/BaseXApicLib.inf
 CpuLib|edk2/MdePkg/Library/BaseCpuLib/BaseCpuLib.inf
 UefiRuntimeServicesTableLib|edk2/MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
 TimerLib|edk2/MdePkg/Library/BaseTimerLibNullTemplate/BaseTimerLibNullTemplate.inf
+BmpSupportLib|edk2/MdeModulePkg/Library/BaseBmpSupportLib/BaseBmpSupportLib.inf
+SafeIntLib|edk2/MdePkg/Library/BaseSafeIntLib/BaseSafeIntLib.inf
 
 [Components]
   src/UEFI_fireworks/UEFI_fireworks.inf

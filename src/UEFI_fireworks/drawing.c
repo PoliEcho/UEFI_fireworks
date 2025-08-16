@@ -1,5 +1,4 @@
 #include "Base.h"
-#include "Library/UefiLib.h"
 #include "ProcessorBind.h"
 #include "const.h"
 #include "global.h"
@@ -105,3 +104,5 @@ BOOLEAN step_firework(firework_instance *firework) {
   }
   return TRUE;
 }
+
+BOOLEAN step_rocket(rocket_instance *rocket) {}

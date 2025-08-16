@@ -11,6 +11,7 @@
   drawing.c
   rng.c
   time.c
+  rocket.c
 
 [Packages]
   edk2/MdePkg/MdePkg.dec
@@ -30,6 +31,7 @@
   RngLib
   SerialPortLib
   UefiRuntimeServicesTableLib
+  BmpSupportLib
 
 [Protocols]
   gEfiRngProtocolGuid
