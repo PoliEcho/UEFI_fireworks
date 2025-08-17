@@ -1,19 +1,23 @@
 #include "Base.h"
+#include "Library/BaseMemoryLib.h"
+#include "Library/MemoryAllocationLib.h"
 #include "Library/UefiLib.h"
 #include "ProcessorBind.h"
 #include "bmp.h"
 #include "const.h"
 #include "global.h"
+#include "time.h"
 #include "types.h"
 #include <../MdeModulePkg/Include/Library/BmpSupportLib.h>
 #include <Library/UefiApplicationEntryPoint.h>
 #include <Protocol/GraphicsOutput.h>
+#include <alloca.h>
 
 void draw_pixel(const UINT32 x, const UINT32 y,
                 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL pixel) {
-  if (x > GraphicsOutput->Mode->Info->HorizontalResolution ||
-      y > GraphicsOutput->Mode->Info
-              ->VerticalResolution) { // ignore when out of bounds
+  if (x >= GraphicsOutput->Mode->Info->HorizontalResolution ||
+      y >= GraphicsOutput->Mode->Info
+               ->VerticalResolution) { // ignore when out of bounds
     return;
   }
   UINTN framebuffer_offset =
@@ -109,8 +113,9 @@ BOOLEAN step_firework(firework_instance *firework) {
 }
 rocket_blt rocket_asset;
 
-EFI_GRAPHICS_OUTPUT_BLT_PIXEL **mask_stack;
 BOOLEAN **rocket_alfa_mask;
+
+UINT32 *rocket_clean_up_mask;
 
 void init_rocket_blt() {
   EFI_STATUS Status = TranslateBmpToGopBlt(
@@ -120,38 +125,49 @@ void init_rocket_blt() {
     Print(L"Failed to load rocket asset: %r\n", Status);
     Exit(Status);
   }
+  rocket_clean_up_mask = AllocatePool(rocket_asset.width * sizeof(location));
+  rocket_alfa_mask = AllocateZeroPool(rocket_asset.height * sizeof(BOOLEAN *));
+  for (UINT32 i = 0; i < rocket_asset.height; i++) {
+    rocket_alfa_mask[i] = AllocatePool(rocket_asset.width * sizeof(BOOLEAN));
+    for (UINT32 j = 0; j < rocket_asset.width; j++) {
+      if (rocket_asset.blt[i * rocket_asset.width + j].Blue == 0 &&
+          rocket_asset.blt[i * rocket_asset.width + j].Green == 0 &&
+          rocket_asset.blt[i * rocket_asset.width + j].Red == 0) {
+        rocket_alfa_mask[i][j] = FALSE;
+      } else {
+        rocket_alfa_mask[i][j] = TRUE;
+        rocket_clean_up_mask[j] = i + 1; // build the cleanup mask
+      }
+    }
+  }
+}
+void draw_rocket(location *rocket) {
+  for (UINT32 i = 0; i < rocket_asset.width; i++) {
+    for (UINT32 j = 0; j < rocket_asset.height; j++) {
+      if (rocket_alfa_mask[j][i]) {
+        draw_pixel(i + rocket->x, j + rocket->y,
+                   rocket_asset.blt[j * rocket_asset.width + i]);
+      }
+    }
+  }
 }
 
-BOOLEAN step_rocket(rocket_instance *rocket, UINT32 max_y) {
-  GraphicsOutput->Blt(GraphicsOutput,
-                      rocket_asset.blt,    // BltBuffer
-                      EfiBltBufferToVideo, // BltOperation
-                      0,                   // src X
-                      0,                   // src Y
-                      rocket->x,           // dst X
-                      rocket->y,           // dst Y
-                      rocket_asset.width, rocket_asset.height,
-                      0 // unused Delta
-  );
-
+BOOLEAN step_rocket(location *rocket, UINT32 max_y) {
+  draw_rocket(rocket);
+  for (UINT8 i = 0; i < rocket_asset.width; i++) {
+    draw_pixel(rocket->x + i, rocket->y + rocket_clean_up_mask[i], night_sky);
+  }
   if (rocket->y <= max_y) {
-    GraphicsOutput->Blt(
-        GraphicsOutput,
-        &night_sky,              // BltBuffer
-        EfiBltVideoFill,         // BltOperation
-        0,                       // SourceX
-        0,                       // SourceY
-        rocket->x,               // DestinationX
-        rocket->y,               // DestinationY
-        rocket_asset.width,      // Width
-        rocket_asset.height + 1, // Height // remove trail from previous frame
-        0                        // Delta (not used for fill operations)
-    );
+    // remove rocket
+    for (UINT32 i = 0; i < rocket_asset.width; i++) {
+      for (UINT32 j = 0; j < rocket_asset.height; j++) {
+        if (rocket_alfa_mask[j][i]) {
+          draw_pixel(i + rocket->x, j + rocket->y, night_sky);
+        }
+      }
+    }
     return FALSE;
   } else {
-    for (UINT8 i = 0; i < rocket_asset.width; i++) {
-      draw_pixel(rocket->x + i, rocket->y + rocket_asset.height, night_sky);
-    }
     rocket->y--;
     return TRUE;
   }

@@ -6,4 +6,4 @@ void draw_circle(int xc, int yc, int r,
 void clear_screen();
 BOOLEAN step_firework(firework_instance *firework);
 void init_rocket_blt();
-BOOLEAN step_rocket(rocket_instance *rocket, UINT32 max_y);
+BOOLEAN step_rocket(location *rocket, UINT32 max_y);

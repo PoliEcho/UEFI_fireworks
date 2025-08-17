@@ -19,7 +19,7 @@
 #include <Uefi.h>
 #include <stdint.h>
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL night_sky =
-    COLOR_FROM_HEX(0x11095e); // this cannot be const becose EDK2 said so
+    COLOR_FROM_HEX(0x090531); // this cannot be const becose EDK2 said so
 
 firework_instance create_firework();
 EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
@@ -135,7 +135,7 @@ firework_instance create_firework() {
   firework_instance firework;
   UINT32 random;
   fill_random_bytes(&random, sizeof(random));
-  firework.max_r = (random % 200) + 1; // 1 to 200, avoiding 0
+  firework.max_r = (random % 190) + 10; // 10 to 200,
 
   for (UINT8 i = 0; i < ARRAY_SIZE(firework.color); i++) {
     fill_random_bytes(&firework.color[i],
@@ -152,6 +152,6 @@ firework_instance create_firework() {
 
   firework.rocket.x = firework.x + rocket_asset.width / 2;
   firework.rocket.y = GraphicsOutput->Mode->Info->VerticalResolution;
-  firework.status = LAUNCHING; // TODO set to LAUNCHING when implemented
+  firework.status = LAUNCHING;
   return firework;
 }

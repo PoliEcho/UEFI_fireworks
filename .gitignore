@@ -1,5 +1,4 @@
 build/
 .cache/
 compile_commands.json
-assets/rocket_orig.bmp
 src/UEFI_fireworks/rocket.c
