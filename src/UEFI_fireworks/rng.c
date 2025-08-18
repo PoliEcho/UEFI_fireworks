@@ -68,7 +68,7 @@ void init_rng() {
     Status = gRT->GetTime(&Time, NULL);
     if (EFI_ERROR(Status)) {
       Print(L"failed to get time\r\n");
-      milisleep(2000);
+      microsleep(2000000);
       starting = 1;
     } else {
       starting = Time.Second;

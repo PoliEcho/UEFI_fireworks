@@ -1,7 +1,7 @@
 #include "Library/UefiLib.h"
 #include <Library/UefiBootServicesTableLib.h>
 EFI_STATUS
-milisleep(UINTN Milliseconds) {
+microsleep(UINTN n) {
   EFI_STATUS Status;
   EFI_EVENT TimerEvent;
 
@@ -13,7 +13,7 @@ milisleep(UINTN Milliseconds) {
   }
 
   Status = gBS->SetTimer(TimerEvent, TimerRelative,
-                         EFI_TIMER_PERIOD_MILLISECONDS(Milliseconds));
+                         EFI_TIMER_PERIOD_MICROSECONDS(n));
 
   if (!EFI_ERROR(Status)) {
     gBS->WaitForEvent(1, &TimerEvent, NULL);

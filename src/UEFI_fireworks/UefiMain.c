@@ -1,4 +1,6 @@
 #include "ProcessorBind.h"
+#include "Protocol/SimpleTextIn.h"
+#include "Uefi/UefiBaseType.h"
 #include "const.h"
 #include "drawing.h"
 #include "global.h"
@@ -20,7 +22,7 @@
 #include <stdint.h>
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL night_sky =
     COLOR_FROM_HEX(0x090531); // this cannot be const becose EDK2 said so
-
+#define DEFAULT_SLEEP_TIME 10000
 firework_instance create_firework();
 EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL *framebuffer = NULL;
@@ -71,16 +73,10 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
 
   SERIAL_PRINT("DOES it work?\n");
   Print(L"If you see this message for long time, timer does not work\n");
-  milisleep(1);
+  microsleep(1);
   clear_screen();
 
-  /*rocket_instance rocket = {
-      .x = GraphicsOutput->Mode->Info->HorizontalResolution / 2,
-      .y = GraphicsOutput->Mode->Info->VerticalResolution - 50};
-  while (step_rocket(&rocket, 100)) {
-    milisleep(10);
-  }*/
-
+  UINTN sleep_time = DEFAULT_SLEEP_TIME;
   while (TRUE) {
     UINT8 random;
     fill_random_bytes(&random, sizeof(random));
@@ -124,8 +120,71 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
         }
       }
     }
+    EFI_INPUT_KEY key;
+    EFI_STATUS status = gST->ConIn->ReadKeyStroke(gST->ConIn, &key);
+    gST->ConIn->Reset(gST->ConIn, FALSE);
+    if (status == EFI_SUCCESS) {
+      switch (key.ScanCode) {
+      case SCAN_UP: // increase simulation speed
 
-    milisleep(10);
+        if (sleep_time > 100) {
+          sleep_time = sleep_time - 100;
+        } else if (sleep_time > 10) {
+          sleep_time = sleep_time - 10;
+        } else if (sleep_time > 1) {
+          sleep_time = sleep_time - 1;
+        }
+        break;
+      case SCAN_DOWN:
+        if (sleep_time < UINT32_MAX - 100) {
+          sleep_time = sleep_time + 100;
+        } else if (sleep_time < UINT32_MAX - 10) {
+          sleep_time = sleep_time + 10;
+        } else if (sleep_time < UINT32_MAX - 1) {
+          sleep_time = sleep_time + 1;
+        }
+        break;
+      case SCAN_PAGE_UP:
+        if (sleep_time > 1000) {
+          sleep_time = sleep_time - 1000;
+        } else if (sleep_time > 100) {
+          sleep_time = sleep_time - 100;
+        } else if (sleep_time > 10) {
+          sleep_time = sleep_time - 10;
+        } else if (sleep_time > 1) {
+          sleep_time = sleep_time - 1;
+        }
+        break;
+      case SCAN_PAGE_DOWN:
+        if (sleep_time < UINT32_MAX - 1000) {
+          sleep_time = sleep_time + 1000;
+        } else if (sleep_time < UINT32_MAX - 100) {
+          sleep_time = sleep_time + 100;
+        } else if (sleep_time < UINT32_MAX - 10) {
+          sleep_time = sleep_time + 10;
+        } else if (sleep_time < UINT32_MAX - 1) {
+          sleep_time = sleep_time + 1;
+        }
+        break;
+      case SCAN_HOME:
+        sleep_time = DEFAULT_SLEEP_TIME;
+        break;
+      case SCAN_DELETE:
+        for (UINT8 i = 0; i < ARRAY_SIZE(firework_array); i++) {
+          if (firework_array[i] != NULL) {
+            FreePool(firework_array[i]);
+            firework_array[i] = NULL;
+          }
+        }
+        // clear_screen(); does not work on real hardware here for some unknown
+        // reason
+        for (UINTN i = 0; i < GraphicsOutput->Mode->FrameBufferSize; i++) {
+          framebuffer[i] = night_sky;
+        }
+        break;
+      }
+    }
+    microsleep(sleep_time);
   }
 
   return EFI_SUCCESS;

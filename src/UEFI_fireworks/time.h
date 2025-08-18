@@ -1,2 +1,2 @@
 #pragma once
-void milisleep(UINTN n);
+void microsleep(UINTN n);
