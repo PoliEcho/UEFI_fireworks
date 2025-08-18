@@ -16,7 +16,7 @@ cd ..
 
 ### On VM  
 
-run ```./test.sh``` to run in VM using QEMU  
+run ```./test.sh # only works on AMD64``` to run in VM using QEMU  
 
 ### On Real hardware  
 
