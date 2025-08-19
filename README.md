@@ -57,3 +57,9 @@ copy ```edk2/Build/UEFI_fireworks/DEBUG_GCC5/<YOUR ARCH>/UEFI_fireworks.efi``` t
 | PAGE_DOWN  | speed down   | 10x step                            |
 | Home key   | reset speed  | reset frame delay to 10ms           |
 | Delete key | clear screen |                                     |
+
+
+## Showcase  
+in QEMU/KVM  
+
+https://github.com/user-attachments/assets/275e28aa-eb2e-4348-ac08-95f909c46a1f
