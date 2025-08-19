@@ -5,7 +5,8 @@ Primary purpose of this app is just to look at something nice.
 
 > [!CAUTION]
 > This app may cause epileptic seizures in people with epilepsy.  
-> $\color{red}{\text{!!!If you have a history of seizures, do not use this program!!!}}$
+> $\color{red}{\text{!!!If you have a history of seizures, do not use this program!!!}}$  
+> I don't know if colorful expanding circles can cause seizures and i don't want for anyone to get hurt
 
 ## How to build
 
