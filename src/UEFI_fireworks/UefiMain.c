@@ -52,8 +52,8 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE imgHandle,
     return EFI_NOT_FOUND;
   }
 
-  framebuffer =
-      (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)GraphicsOutput->Mode->FrameBufferBase;
+  framebuffer = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)(UINTN)
+                    GraphicsOutput->Mode->FrameBufferBase;
 
   init_rng();
   init_rocket_blt();

@@ -3,15 +3,26 @@
 
 ## How to build  
 
+> [!IMPORTANT]  
+> **you will need these programs to compile!**  
+> git  
+> gcc  
+> xxd   
+> ImageMagick (if you changed the firework image)
+
 ```bash
 git submodule update --init --recursive
 cd  edk2
 source edksetup.sh
 make -C BaseTools
 cd ..
-./build.sh
+./build.sh # to build for diferent arch than X64 change TARGET_ARCH in build.sh
 ```
-
+> [!WARNING]
+> **compilation for AARCH64**  
+> does not work  
+> for some unknown reason  
+> i haven't tryed other arches than AMD64, IA32 and AARCH64
 ## How to use  
 
 ### Download release  
@@ -44,7 +55,7 @@ copy ```edk2/Build/UEFI_fireworks/DEBUG_GCC5/<YOUR ARCH>/UEFI_fireworks.efi``` t
 | ------------------- | ------------------------ |
 | **x86_64 (AMD64)**  | `/EFI/BOOT/BOOTX64.EFI`  |
 | **x86 (IA32)**      | `/EFI/BOOT/BOOTIA32.EFI` |
-| **ARM64 (AArch64)** | `/EFI/BOOT/BOOTAA64.EFI` |
+| **ARM64 (AARCH64)** | `/EFI/BOOT/BOOTAA64.EFI` |
 | **ARM (32-bit)**    | `/EFI/BOOT/BOOTARM.EFI`  |
 
 ## Controling  

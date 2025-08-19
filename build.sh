@@ -1,11 +1,12 @@
 #!/bin/bash
 export PACKAGES_PATH=$PWD:$PWD/edk2
+export TARGET_ARCH=X64
 magick assets/rocket_orig.bmp -type TrueColor -define  bmp:format=bmp3 -compress None assets/rocket.bmp
 xxd -i assets/rocket.bmp > src/UEFI_fireworks/rocket.c
 if [ "$1" == "debug" ]; then
-    build -a X64 -t GCC5 -p UEFI_fireworks.dsc -b DEBUG
+    build -a $TARGET_ARCH -t GCC5 -p UEFI_fireworks.dsc -b DEBUG
 else
-    build -a X64 -t GCC5 -p UEFI_fireworks.dsc -b RELEASE
+    build -a $TARGET_ARCH -t GCC5 -p UEFI_fireworks.dsc -b RELEASE
 fi
 mkdir -p build/EFI/BOOT/
 if [ "$1" == "debug" ]; then
