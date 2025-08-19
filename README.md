@@ -1,76 +1,91 @@
+# UEFI Fireworks
+### Retro fireworks you can run on your modern UEFI system
+Simple automatic fireworks app that runs on your UEFI firmware with basic controls.  
+Primary purpose of this app is just to look at something nice.
 
-# UEFI Fireworks  
+> [!CAUTION]
+> This app may cause epileptic seizures in people with epilepsy.  
+> $\color{red}{\text{!!!If you have a history of seizures, do not use this program!!!}}$
 
-## How to build  
+## How to build
 
 > [!IMPORTANT]  
-> **you will need these programs to compile!**  
-> git  
-> gcc  
-> xxd   
-> ImageMagick (if you changed the firework image)
+> You will need these programs to compile:  
+> - git  
+> - gcc  
+> - xxd  
+> - ImageMagick (if you changed the firework image)
 
 ```bash
 git submodule update --init --recursive
-cd  edk2
+cd edk2
 source edksetup.sh
 make -C BaseTools
 cd ..
-./build.sh # to build for diferent arch than X64 change TARGET_ARCH in build.sh
+./build.sh # to build for a different arch than X64 change TARGET_ARCH in build.sh
 ```
+
 > [!WARNING]
-> **compilation for AARCH64**  
-> does not work  
-> for some unknown reason  
-> i haven't tryed other arches than AMD64, IA32 and AARCH64
-## How to use  
+> Compilation for AARCH64 does not work for some unknown reason.  
+> I haven't tried other arches than AMD64, IA32, and AARCH64.
 
-### Download release  
+## How to use
 
-#### On Real hardware  
+### Download release
 
-if your have amd64(x86_64) UEFI computer  
-Download release and copy the UEFI_fireworks.efi to <USB_DRIVE>/EFI/BOOT/bootx64.efi case independent  
+#### On real hardware
 
-#### On VM  
+If you have an amd64 (x86_64) UEFI computer,  
+download the release and copy UEFI_fireworks.efi to /EFI/BOOT/bootx64.efi (case-insensitive).
 
-run:  
-you will need OVMF firmware you can get it [here](https://qemu.weilnetz.de/test/ovmf/usr/share/OVMF/OVMF_CODE_4M.fd)
+#### On VM
+
+You will need OVMF firmware; you can get it here: https://qemu.weilnetz.de/test/ovmf/usr/share/OVMF/OVMF_CODE_4M.fd
+
+Run:
 ```bash
 qemu-system-x86_64 -machine type=q35,accel=kvm -drive if=pflash,format=raw,readonly=on,file="$OVMF_CODE_PATH" -hda fat:rw:build -boot order=c -smp 4 -s -serial mon:stdio
-```  
+```
 
-### Build  
+### Build
 
-#### On VM  
+#### On VM
 
-you will need OVMF firmware you can get it [here](https://qemu.weilnetz.de/test/ovmf/usr/share/OVMF/OVMF_CODE_4M.fd)  
-run ```./test.sh $OVMF_CODE_PATH# only works on AMD64``` to run in VM using QEMU  
+You will need OVMF firmware; you can get it here: https://qemu.weilnetz.de/test/ovmf/usr/share/OVMF/OVMF_CODE_4M.fd
 
-#### On Real hardware  
+Run:
+```bash
+./test.sh $OVMF_CODE_PATH  # only works on AMD64
+```
+to run in a VM using QEMU.
 
-copy ```edk2/Build/UEFI_fireworks/DEBUG_GCC5/<YOUR ARCH>/UEFI_fireworks.efi``` to FAT32 or FAT16 USB at location:
+#### On real hardware
 
-| Architecture        | Default Boot Path        |
-| ------------------- | ------------------------ |
-| **x86_64 (AMD64)**  | `/EFI/BOOT/BOOTX64.EFI`  |
-| **x86 (IA32)**      | `/EFI/BOOT/BOOTIA32.EFI` |
-| **ARM64 (AARCH64)** | `/EFI/BOOT/BOOTAA64.EFI` |
-| **ARM (32-bit)**    | `/EFI/BOOT/BOOTARM.EFI`  |
+Copy:
+```
+edk2/Build/UEFI_fireworks/DEBUG_GCC5//UEFI_fireworks.efi
+```
+to a FAT32 or FAT16 USB at the following location:
 
-## Controling  
+| Architecture    | Default Boot Path        |
+| --------------- | ------------------------ |
+| x86_64 (AMD64)  | `/EFI/BOOT/BOOTX64.EFI`  |
+| x86 (IA32)      | `/EFI/BOOT/BOOTIA32.EFI` |
+| ARM64 (AARCH64) | `/EFI/BOOT/BOOTAA64.EFI` |
+| ARM (32-bit)    | `/EFI/BOOT/BOOTARM.EFI`  |
 
-| Key        | Action       | Note                                |
-| ---------- | ------------ | ----------------------------------- |
-| ARROW_UP   | speed up     | delays under 1ms may be unrelayable |
-| ARROW_DOWN | slow down    | max delay is about UINT32_MAXμs     |
-| PAGE_UP    | speed up     | 10x step                            |
-| PAGE_DOWN  | speed down   | 10x step                            |
-| Home key   | reset speed  | reset frame delay to 10ms           |
-| Delete key | clear screen |                                     |
+## Controlling
 
+| Key        | Action       | Note                               |
+| ---------- | ------------ | ---------------------------------- |
+| ARROW_UP   | speed up     | delays under 1ms may be unreliable |
+| ARROW_DOWN | slow down    | max delay is about UINT32_MAX μs   |
+| PAGE_UP    | speed up     | 10× step                           |
+| PAGE_DOWN  | slow down    | 10× step                           |
+| Home       | reset speed  | reset frame delay to 10ms          |
+| Delete     | clear screen |                                    |
 
-## Showcase  
-in QEMU/KVM  
+## Showcase
+In QEMU/KVM
 
 https://github.com/user-attachments/assets/275e28aa-eb2e-4348-ac08-95f909c46a1f
