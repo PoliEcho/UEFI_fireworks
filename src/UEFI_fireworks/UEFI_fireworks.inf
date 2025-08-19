@@ -6,12 +6,15 @@
   VERSION_STRING                 = 1.0
   ENTRY_POINT                    = UefiMain
 
-[Sources]
+[Sources.Common]
   UefiMain.c
   drawing.c
   rng.c
   time.c
   rocket.c
+
+[Sources.AARCH64]
+  memcpy.c
 
 [Packages]
   edk2/MdePkg/MdePkg.dec

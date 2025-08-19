@@ -25,10 +25,6 @@ cd ..
 ./build.sh # to build for a different arch than X64 change TARGET_ARCH in build.sh
 ```
 
-> [!WARNING]
-> Compilation for AARCH64 does not work for some unknown reason.  
-> I haven't tried other arches than AMD64, IA32, and AARCH64.
-
 ## How to use
 
 ### Download release

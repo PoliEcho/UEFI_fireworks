@@ -1,6 +1,8 @@
 #!/bin/bash
 export PACKAGES_PATH=$PWD:$PWD/edk2
 export TARGET_ARCH=X64
+# export GCC5_AARCH64_PREFIX=aarch64-linux-gnu- # uncomment for AARCH64 crosscompilation or you can use
+# export GCC5_AARCH64_PREFIX=aarch64-none-elf-
 magick assets/rocket_orig.bmp -type TrueColor -define  bmp:format=bmp3 -compress None assets/rocket.bmp
 xxd -i assets/rocket.bmp > src/UEFI_fireworks/rocket.c
 if [ "$1" == "debug" ]; then
