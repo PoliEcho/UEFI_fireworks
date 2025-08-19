@@ -9,9 +9,9 @@ else
 fi
 mkdir -p build/EFI/BOOT/
 if [ "$1" == "debug" ]; then
-cp $(find edk2/Build/UEFI_fireworks/DEBUG_GCC5/ -name "UEFI_fireworks.efi" -type f | head -1) build/
-cp $(find edk2/Build/UEFI_fireworks/DEBUG_GCC5/ -name "UEFI_fireworks.efi" -type f | head -1) build/EFI/BOOT/BOOTX64.EFI
+cp -v $(find edk2/Build/UEFI_fireworks/DEBUG_GCC5/ -name "UEFI_fireworks.efi" -type f | head -1) build/
+cp -v $(find edk2/Build/UEFI_fireworks/DEBUG_GCC5/ -name "UEFI_fireworks.efi" -type f | head -1) build/EFI/BOOT/BOOTX64.EFI
 else
-cp $(find edk2/Build/UEFI_fireworks/RELEASE_GCC5/ -name "UEFI_fireworks.efi" -type f | head -1) build/
-cp $(find edk2/Build/UEFI_fireworks/RELEASE_GCC5/ -name "UEFI_fireworks.efi" -type f | head -1) build/EFI/BOOT/BOOTX64.EFI
+cp -v $(find edk2/Build/UEFI_fireworks/RELEASE_GCC5/ -name "UEFI_fireworks.efi" -type f | head -1) build/
+cp -v $(find edk2/Build/UEFI_fireworks/RELEASE_GCC5/ -name "UEFI_fireworks.efi" -type f | head -1) build/EFI/BOOT/BOOTX64.EFI
 fi

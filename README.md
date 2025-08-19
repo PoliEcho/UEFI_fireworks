@@ -19,7 +19,7 @@ cd ..
 #### On Real hardware  
 
 if your have amd64(x86_64) UEFI computer  
-Download release and copy the bootx64.efi to <USB_DRIVE>/EFI/BOOT/bootx64.efi case independent  
+Download release and copy the UEFI_fireworks.efi to <USB_DRIVE>/EFI/BOOT/bootx64.efi case independent  
 
 #### On VM  
 
